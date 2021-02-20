@@ -48,14 +48,35 @@ IceCopyPastePlugin.prototype = {
     this.setupPreserved();
   },
 
-  keyDown: function(e) {
-    if (e.metaKey !== true && e.ctrlKey !== true)
+  keyDown: function (e) {
+    if (tinymce.isMac) {
+      // Meta+V on Mac
+      if (e.metaKey && e.keyCode === 86) {
+        this.handlePaste();
+        return true;
+      }
+      // Meta+X on Mac
+      if (e.metaKey && e.keyCode === 88) {
+        this.handleCut();
+        return true;
+      }
       return;
-    if (e.keyCode == 86)
+    }
+    // CTRL+V on Windows
+    if (e.ctrlKey && e.keyCode === 86) {
       this.handlePaste();
-    else if (e.keyCode == 88)
+      return true;
+    }
+    // CTRL+X on Windows
+    if (e.ctrlKey && e.keyCode === 88) {
       this.handleCut();
-    return true;
+      return true;
+    }
+    // Shift+Insert on Windows
+    if (e.shiftKey && e.keyCode===45) {
+      this.handlePaste();
+      return true;
+    }
   },
 
   handleCopy: function(e) {},
