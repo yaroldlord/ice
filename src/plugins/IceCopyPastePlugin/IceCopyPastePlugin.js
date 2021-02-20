@@ -28,6 +28,8 @@ IceCopyPastePlugin = function(ice_instance) {
   // and `title` attributes removed, and `span` tags will keep all attributes.
   this.preserve = 'p';
 
+  this.pasteHandled=false;
+
   // Callback triggered before any paste cleaning happens
   this.beforePasteClean = function(body) { return body; };
 
@@ -79,12 +81,23 @@ IceCopyPastePlugin.prototype = {
     }
   },
 
-  handleCopy: function(e) {},
+  paste: function (e) {
+    if (this.pasteHandled) return true;
+    return this.handlePaste(true);
+  },
 
+  handleCopy: function(e) {},
+  /**
+   * Inserts a temporary placeholder for the current range and removes
+   * the contents of the ice element body and calls a paste handler.
+   * @param {boolean} afterPastEvent  If handlePaste is call before paste event
+   * @return {boolean}
+   */
   // Inserts a temporary placeholder for the current range and removes
   // the contents of the ice element body and calls a paste handler.
-  handlePaste: function(e) {
+  handlePaste: function(afterPastEvent=false) {
 
+    this.pasteHandled = true;
     var range = this._ice.getCurrentRange();
 
     if (!range.collapsed) {
@@ -117,10 +130,10 @@ IceCopyPastePlugin.prototype = {
 
     switch (this.pasteType) {
       case 'formatted':
-        this.setupPaste();
+        this.setupPaste(false,afterPastEvent);
         break;
       case 'formattedClean':
-        this.setupPaste(true);
+        this.setupPaste(true,afterPastEvent);
         break;
     }
              
@@ -129,7 +142,7 @@ IceCopyPastePlugin.prototype = {
 
   // Create a temporary div and set focus to it so that the browser can paste into it.
   // Set a timeout to push a paste handler on to the end of the execution stack.
-  setupPaste: function(stripTags) {
+  setupPaste: function(stripTags,afterPastEvent) {
     var div = this.createDiv(this._pasteId),
         self = this,
         range = this._ice.getCurrentRange();
@@ -137,13 +150,18 @@ IceCopyPastePlugin.prototype = {
     range.selectNodeContents(div);
     this._ice.selection.addRange(range);
 
-    div.onpaste = function(event) {
-      setTimeout(function(){
+    if (!afterPastEvent) {
+      div.onpaste = function (event) {
+        setTimeout(function () {
+          self.handlePasteValue(stripTags);
+        }, 0);
+        event.stopPropagation();
+      };
+    } else {
+      setTimeout(function () {
         self.handlePasteValue(stripTags);
-      },0);
-       event.stopPropagation();
-    };
-
+      }, 0);
+    }
     div.focus();
     return true;
   },
@@ -152,6 +170,7 @@ IceCopyPastePlugin.prototype = {
   // paste, format it, remove any Microsoft or extraneous tags outside of `this.preserve`
   // and merge the pasted content into the original fragment body.
   handlePasteValue: function(stripTags) {
+    this.pasteHandled = false;
     // Get the pasted content.
     var doc = this._ice.env.document,
         pasteDiv = doc.getElementById(this._pasteId),

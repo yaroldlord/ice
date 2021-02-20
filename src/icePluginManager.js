@@ -299,6 +299,16 @@ IcePluginManager.prototype = {
     return val;
   },
 
+  firePaste: function(e) {
+    var val = true;
+    for (var i in this.plugins) {
+      if (this.plugins[i].paste(e) === false) {
+        val = false;
+      }
+    }
+    return val;
+  },
+
   fireKeyPress: function(e) {
     var val = true;
     for (var i in this.plugins) {

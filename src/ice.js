@@ -274,6 +274,8 @@
         return needsToBubble;
       } else if (e.type == 'keyup') {
         this.pluginsManager.fireCaretUpdated();
+      } else if (e.type == 'paste') {
+        return this.paste(e);
       }
     },
   visible: function(el) {
@@ -1678,6 +1680,10 @@
     mouseDown: function (e, target) {
       if (!this.pluginsManager.fireMouseDown(e)) return false;
       this.pluginsManager.fireCaretUpdated();
+    },
+
+    paste: function (e, target) {
+      if (!this.pluginsManager.firePaste(e)) return false;
     }
   };
 

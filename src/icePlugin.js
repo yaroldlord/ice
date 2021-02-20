@@ -21,6 +21,9 @@ IcePlugin.prototype = {
   keyPress: function(e) {
     return true;
   },
+  paste: function(e) {
+    return true;
+  },
   selectionChanged: function(range) {},
   setEnabled: function(enabled) {},
   setDisabled: function(enabled) {},
