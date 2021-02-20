@@ -309,6 +309,17 @@ IcePluginManager.prototype = {
     return val;
   },
 
+  fireCut: function(e) {
+    var val = true;
+    for (var i in this.plugins) {
+      if (this.plugins[i].cut(e) === false) {
+        val = false;
+      }
+    }
+    return val;
+  },
+
+
   fireKeyPress: function(e) {
     var val = true;
     for (var i in this.plugins) {

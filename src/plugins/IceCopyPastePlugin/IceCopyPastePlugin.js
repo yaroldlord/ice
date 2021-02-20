@@ -30,6 +30,8 @@ IceCopyPastePlugin = function(ice_instance) {
 
   this.pasteHandled=false;
 
+  this.cutHandled=false;
+
   // Callback triggered before any paste cleaning happens
   this.beforePasteClean = function(body) { return body; };
 
@@ -84,6 +86,11 @@ IceCopyPastePlugin.prototype = {
   paste: function (e) {
     if (this.pasteHandled) return true;
     return this.handlePaste(true);
+  },
+
+  cut: function (e) {
+    if (this.cutHandled) return true;
+    return this.handleCut();
   },
 
   handleCopy: function(e) {},
@@ -313,6 +320,7 @@ IceCopyPastePlugin.prototype = {
   // into it, deleting the current selection with track changes, and selecting the contents in the
   // editable div.
   handleCut: function() {
+    this.cutHandled=true;
     var self = this,
         range = this._ice.getCurrentRange();
     if (range.collapsed) return; // If nothing is selected, there's nothing to mark deleted
@@ -333,6 +341,7 @@ IceCopyPastePlugin.prototype = {
 
       // After the browser cuts out of the `cutElement`, reset the range and remove the cut element.
       setTimeout(function() {
+        self.cutHandled=false;
         ice.dom.remove(self.cutElement);
         range.setStart(range.startContainer, range.startOffset);
         range.collapse(false);

@@ -24,6 +24,9 @@ IcePlugin.prototype = {
   paste: function(e) {
     return true;
   },
+  cut: function(e) {
+    return true;
+  },
   selectionChanged: function(range) {},
   setEnabled: function(enabled) {},
   setDisabled: function(enabled) {},

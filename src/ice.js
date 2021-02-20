@@ -276,6 +276,8 @@
         this.pluginsManager.fireCaretUpdated();
       } else if (e.type == 'paste') {
         return this.paste(e);
+      } else if (e.type == 'cut') {
+        return this.cut(e);
       }
     },
   visible: function(el) {
@@ -1684,6 +1686,10 @@
 
     paste: function (e, target) {
       if (!this.pluginsManager.firePaste(e)) return false;
+    },
+
+    cut: function (e, target) {
+      if (!this.pluginsManager.fireCut(e)) return false;
     }
   };
 
