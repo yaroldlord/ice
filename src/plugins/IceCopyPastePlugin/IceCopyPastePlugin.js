@@ -102,7 +102,7 @@ IceCopyPastePlugin.prototype = {
    */
   // Inserts a temporary placeholder for the current range and removes
   // the contents of the ice element body and calls a paste handler.
-  handlePaste: function(afterPastEvent=false) {
+  handlePaste: function(afterPastEvent) {
 
     this.pasteHandled = true;
     var range = this._ice.getCurrentRange();
@@ -157,17 +157,17 @@ IceCopyPastePlugin.prototype = {
     range.selectNodeContents(div);
     this._ice.selection.addRange(range);
 
-    if (!afterPastEvent) {
+    if (afterPastEvent) {
+      setTimeout(function () {
+        self.handlePasteValue(stripTags);
+      }, 0);
+    } else {
       div.onpaste = function (event) {
         setTimeout(function () {
           self.handlePasteValue(stripTags);
         }, 0);
         event.stopPropagation();
       };
-    } else {
-      setTimeout(function () {
-        self.handlePasteValue(stripTags);
-      }, 0);
     }
     div.focus();
     return true;
