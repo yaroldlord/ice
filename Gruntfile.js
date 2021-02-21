@@ -84,7 +84,7 @@ module.exports = function(grunt) {
       },
       tinyice: {
         files: {
-          'dist/ice_editor_plugin.js': 'lib/tinymce/js/tinymce/plugins/ice/plugin.min.js'
+          'dist/tinymce/plugins/ice/plugin.min.js': 'lib/tinymce/js/tinymce/plugins/ice/plugin.js'
         }
       }
     },
@@ -123,7 +123,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('test', ['connect', 'qunit']);
 
-  grunt.registerTask('build', ['clean:build', 'concat', 'uglify:ice', 'uglify:icemaster', 'compress:gz', 'cp', 'compress:zip']);
+  grunt.registerTask('build', ['clean:build', 'concat', 'uglify:ice', 'uglify:icemaster', 'uglify:tinyice', 'compress:gz', 'cp', 'compress:zip']);
 
   grunt.registerTask('cp', function() {
     cpTinyDir('ice');
