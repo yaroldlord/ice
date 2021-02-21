@@ -1,0 +1,15 @@
+.mceNonEditable {
+	background-color: lightsteelblue;
+}
+
+.mceEditable {
+	background-color: white;
+	line-height: 24px;
+}
+
+.mceNonEditable br {
+	margin-bottom: 10px;
+	display: block;
+	content:'';
+	border-bottom: 10px solid transparent;
+}

@@ -70,18 +70,6 @@ module.exports = function(grunt) {
           'dist/ice.min.js': ['dist/ice.js']
         }
       },
-      icemaster: {
-        options: {
-          banner: '//\n' +
-            '// <%= pkg.name %> - Master\n' +
-            '// The MIT License\n' +
-            '// Copyright (c) 2012 The New York Times, CMS Group, Matthew DeLambo <delambo@gmail.com>\n' +
-            '//\n'
-        },
-        files: {
-          'ice-master.min.js': ['dist/ice.js']
-        }
-      },
       tinyice: {
         files: {
           'dist/tinymce/plugins/ice/plugin.min.js': 'lib/tinymce/js/tinymce/plugins/ice/plugin.js'
@@ -123,10 +111,11 @@ module.exports = function(grunt) {
 
   grunt.registerTask('test', ['connect', 'qunit']);
 
-  grunt.registerTask('build', ['clean:build', 'concat', 'uglify:ice', 'uglify:icemaster', 'uglify:tinyice', 'compress:gz', 'cp', 'compress:zip']);
+  grunt.registerTask('build', ['clean:build', 'concat', 'uglify:ice', 'uglify:tinyice', 'compress:gz', 'cp', 'compress:zip']);
 
   grunt.registerTask('cp', function() {
     cpTinyDir('ice');
+    grunt.file.copy('dist/tinymce/plugins/ice/plugin.min.js', 'lib/tinymce/js/tinymce/plugins/ice/plugin.min.js')
     //grunt.file.delete('dist/ice_editor_plugin.js');
   });
 

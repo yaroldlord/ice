@@ -9,3 +9,4 @@ build
 .project
 .idea
 node_modules
+/lib/tinymce/js/tinymce/plugins/ice/plugin.min.js
