@@ -93,8 +93,6 @@
     // ice node class attribute.
     _uniqueStyleIndex: 0,
 
-    _browserType: null,
-
     // One change may create multiple ice nodes, so this keeps track of the current batch id.
     _batchChangeid: null,
 
@@ -395,7 +393,6 @@
      */
     deleteContents: function (right, range) {
       var prevent = true;
-    var browser = ice.dom.browser();
 
       if (range) {
         this.selection.addRange(range);
@@ -409,101 +406,63 @@
       this._deleteSelection(range);
     } else {
       this._deleteSelection(range);
-      if(browser["type"] === "mozilla"){
-        if(range.startContainer.parentNode.previousSibling){
-          range.setEnd(range.startContainer.parentNode.previousSibling, 0);
-          range.moveEnd(ice.dom.CHARACTER_UNIT, ice.dom.getNodeCharacterLength(range.endContainer));
-        } else {
-          range.setEndAfter(range.startContainer.parentNode);
-        }
+      if (!this.visible(range.endContainer)) {
+        range.setEnd(range.endContainer, range.endOffset - 1);
         range.collapse(false);
-      } else {
-        if(!this.visible(range.endContainer)){
-          range.setEnd(range.endContainer, range.endOffset - 1);
-          range.collapse(false);
-        }
       }
     }
       } else {
         if (right) {
-      // RIGHT DELETE
-      if(browser["type"] === "mozilla"){
-        prevent = this._deleteRight(range);
-        // Handling track change show/hide
-        if(!this.visible(range.endContainer)){
-          if(range.endContainer.parentNode.nextSibling){
-//            range.setEnd(range.endContainer.parentNode.nextSibling, 0);
-            range.setEndBefore(range.endContainer.parentNode.nextSibling);
-          } else {
-            range.setEndAfter(range.endContainer);
-          }
-          range.collapse(false);
-        }
-      }
-      else {
-        // Calibrate Cursor before deleting
-        if(range.endOffset === ice.dom.getNodeCharacterLength(range.endContainer)){
-          var next = range.startContainer.nextSibling;
-          if (ice.dom.is(next,  '.' + this._getIceNodeClass('deleteType'))) {
-            while(next){
-              if (ice.dom.is(next,  '.' + this._getIceNodeClass('deleteType'))) {
-                next = next.nextSibling;
-                continue;
-              }
-              range.setStart(next, 0);
-              range.collapse(true);
-              break;
-            }
-          }
-        }
-
-        // Delete
-        prevent = this._deleteRight(range);
-
-        // Calibrate Cursor after deleting
-        if(!this.visible(range.endContainer)){
-          if (ice.dom.is(range.endContainer.parentNode,  '.' + this._getIceNodeClass('insertType') + ', .' + this._getIceNodeClass('deleteType'))) {
-//            range.setStart(range.endContainer.parentNode.nextSibling, 0);
-            range.setStartAfter(range.endContainer.parentNode);
-            range.collapse(true);
-          }
-        }
-      }
-    }
-        else {
-      // LEFT DELETE
-      if(browser["type"] === "mozilla"){
-        prevent = this._deleteLeft(range);
-        // Handling track change show/hide
-        if(!this.visible(range.startContainer)){
-          if(range.startContainer.parentNode.previousSibling){
-            range.setEnd(range.startContainer.parentNode.previousSibling, 0);
-          } else {
-            range.setEnd(range.startContainer.parentNode, 0);
-          }
-          range.moveEnd(ice.dom.CHARACTER_UNIT, ice.dom.getNodeCharacterLength(range.endContainer));
-          range.collapse(false);
-        }
-      }
-      else {
-        if(!this.visible(range.startContainer)){
-          if(range.endOffset === ice.dom.getNodeCharacterLength(range.endContainer)){
-            var prev = range.startContainer.previousSibling;
-            if (ice.dom.is(prev,  '.' + this._getIceNodeClass('deleteType'))) {
-              while(prev){
-                if (ice.dom.is(prev,  '.' + this._getIceNodeClass('deleteType'))) {
-                  prev = prev.prevSibling;
+          // RIGHT DELETE
+          // Calibrate Cursor before deleting
+          if (range.endOffset === ice.dom.getNodeCharacterLength(range.endContainer)) {
+            var next = range.startContainer.nextSibling;
+            if (ice.dom.is(next, '.' + this._getIceNodeClass('deleteType'))) {
+              while (next) {
+                if (ice.dom.is(next, '.' + this._getIceNodeClass('deleteType'))) {
+                  next = next.nextSibling;
                   continue;
                 }
-                range.setEndBefore(prev.nextSibling, 0);
-                range.collapse(false);
+                range.setStart(next, 0);
+                range.collapse(true);
                 break;
               }
             }
           }
+
+          // Delete
+          prevent = this._deleteRight(range);
+
+          // Calibrate Cursor after deleting
+          if (!this.visible(range.endContainer)) {
+            if (ice.dom.is(range.endContainer.parentNode, '.' + this._getIceNodeClass('insertType') + ', .' + this._getIceNodeClass('deleteType'))) {
+//            range.setStart(range.endContainer.parentNode.nextSibling, 0);
+              range.setStartAfter(range.endContainer.parentNode);
+              range.collapse(true);
+            }
+          }
+
+    }
+        else {
+          // LEFT DELETE
+          if (!this.visible(range.startContainer)) {
+            if (range.endOffset === ice.dom.getNodeCharacterLength(range.endContainer)) {
+              var prev = range.startContainer.previousSibling;
+              if (ice.dom.is(prev, '.' + this._getIceNodeClass('deleteType'))) {
+                while (prev) {
+                  if (ice.dom.is(prev, '.' + this._getIceNodeClass('deleteType'))) {
+                    prev = prev.prevSibling;
+                    continue;
+                  }
+                  range.setEndBefore(prev.nextSibling, 0);
+                  range.collapse(false);
+                  break;
+                }
+              }
+            }
         }
         prevent = this._deleteLeft(range);
-      }
+
     }
       }
 
@@ -1458,7 +1417,6 @@
      */
     _handleAncillaryKey: function (e) {
       var key = e.keyCode ? e.keyCode : e.which;
-      var browser = ice.dom.browser();
       var preventDefault = true;
       var shiftKey = e.shiftKey;
       var self = this;
@@ -1481,35 +1439,10 @@
         case ice.dom.DOM_VK_UP:
         case ice.dom.DOM_VK_LEFT:
           this.pluginsManager.fireCaretPositioned();
-          if (browser["type"] === "mozilla") {
-            if (!this.visible(range.startContainer)) {
-              // if Previous sibling exists in the paragraph, jump to the previous sibling
-              if(range.startContainer.parentNode.previousSibling) {
-                // When moving left and moving into a hidden element, skip it and go to the previousSibling
-                range.setEnd(range.startContainer.parentNode.previousSibling, 0);
-                range.moveEnd(ice.dom.CHARACTER_UNIT, ice.dom.getNodeCharacterLength(range.endContainer));
-                range.collapse(false);
-              }
-              // if Previous sibling doesn't exist, get out of the hidden zone by moving to the right
-              else {
-                range.setEnd(range.startContainer.parentNode.nextSibling, 0);
-                range.collapse(false);
-              }
-            }
-          }
           preventDefault = false;
           break;
         case ice.dom.DOM_VK_RIGHT:
           this.pluginsManager.fireCaretPositioned();
-          if (browser["type"] === "mozilla") {
-            if (!this.visible(range.startContainer)) {
-              if(range.startContainer.parentNode.nextSibling) {
-                // When moving right and moving into a hidden element, skip it and go to the nextSibling
-                range.setStart(range.startContainer.parentNode.nextSibling,0);
-                range.collapse(true);
-              }
-            }
-          }
           preventDefault = false;
           break;
         /** END: Handling of caret movements inside hidden .ins/.del elements ***************/
@@ -1542,18 +1475,8 @@
       var preventDefault = false;
 
       if (this._handleSpecialKey(e) === false) {
-        if (ice.dom.isBrowser('msie') !== true) {
-          this._preventKeyPress = true;
-        }
-
+        this._preventKeyPress = true;
         return false;
-      } else if ((e.ctrlKey === true || e.metaKey === true) && (ice.dom.isBrowser('msie') === true || ice.dom.isBrowser('chrome') === true)) {
-        // IE does not fire keyPress event if ctrl is also pressed.
-        // E.g. CTRL + B (Bold) will not fire keyPress so this.plugins
-        // needs to be notified here for IE.
-        if (!this.pluginsManager.fireKeyPressed(e)) {
-          return false;
-        }
       }
       switch (e.keyCode) {
         case 27:
@@ -1636,27 +1559,9 @@
           if (e.ctrlKey === true || e.metaKey === true) {
             preventDefault = true;
             var range = this.getCurrentRange();
-
-            if (ice.dom.isBrowser('msie') === true) {
-              var selStart = this.env.document.createTextNode('');
-              var selEnd = this.env.document.createTextNode('');
-
-              if (this.element.firstChild) {
-                ice.dom.insertBefore(this.element.firstChild, selStart);
-              } else {
-                this.element.appendChild(selStart);
-              }
-
-              this.element.appendChild(selEnd);
-
-              range.setStart(selStart, 0);
-              range.setEnd(selEnd, 0);
-            } else {
-              range.setStart(range.getFirstSelectableChild(this.element), 0);
-              var lastSelectable = range.getLastSelectableChild(this.element);
-              range.setEnd(lastSelectable, lastSelectable.length);
-            } //end if
-
+            range.setStart(range.getFirstSelectableChild(this.element), 0);
+            var lastSelectable = range.getLastSelectableChild(this.element);
+            range.setEnd(lastSelectable, lastSelectable.length);
             this.selection.addRange(range);
           } //end if
           break;

@@ -12,14 +12,8 @@ var IceEmdashPlugin = function(ice_instance) {
 
 IceEmdashPlugin.prototype = {
 
-	keyDown: function(e) {
-		// Catch dashes.
-		if (ice.dom.isBrowser('mozilla')) {
-      var version = parseInt(ice.dom.browser().version);
-      if ((version > 14 && e.keyCode === 173) || (version <= 14 && e.keyCode === 109)) {
-        return this.convertEmdash(e);
-      }
-		} else if (e.keyCode === 189) {
+	keyDown: function (e) {
+		if (e.keyCode === 109) {
 			return this.convertEmdash(e);
 		}
 		return true;

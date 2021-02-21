@@ -751,48 +751,7 @@
       return resCont;
     }
   };
-  dom.browser = function () {
-    var result = {};
-    result.version = jQuery.browser.version;
-    if (jQuery.browser.mozilla === true) {
-      result.type = 'mozilla';
-    } else if (jQuery.browser.msie === true) {
-      result.type = 'msie';
-    } else if (jQuery.browser.opera === true) {
-      result.type = 'opera';
-    } else if (jQuery.browser.webkit === true) {
-      result.type = 'webkit';
-    }
-    return result;
-  };
-  dom.getBrowserType = function () {
-    if (this._browserType === null) {
-      var tests = ['msie', 'firefox', 'chrome', 'safari'];
-      var tln = tests.length;
-      for (var i = 0; i < tln; i++) {
-        var r = new RegExp(tests[i], 'i');
-        if (r.test(navigator.userAgent) === true) {
-          this._browserType = tests[i];
-          return this._browserType;
-        }
-      }
 
-      this._browserType = 'other';
-    }
-    return this._browserType;
-  };
-  dom.getWebkitType = function(){
-	if(dom.browser().type !== "webkit") {
-		console.log("Not a webkit!");
-		return false;
-	}
-    var isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
-	if(isSafari) return "safari";
-	return "chrome";
-  };
-  dom.isBrowser = function (browser) {
-    return (dom.browser().type === browser);
-  };
 
   dom.getBlockParent = function (node, container) {
     if (dom.isBlockElement(node) === true) {
