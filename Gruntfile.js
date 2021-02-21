@@ -86,11 +86,6 @@ module.exports = function(grunt) {
         files: {
           'dist/ice_editor_plugin.js': 'lib/tinymce/js/tinymce/plugins/ice/plugin.min.js'
         }
-      },
-      tinysr: {
-        files: {
-          'dist/sr_editor_plugin.js': 'lib/tinymce/js/tinymce/plugins/icesearchreplace/plugin.min.js'
-        }
       }
     },
 
@@ -133,9 +128,6 @@ module.exports = function(grunt) {
   grunt.registerTask('cp', function() {
     cpTinyDir('ice');
     //grunt.file.delete('dist/ice_editor_plugin.js');
-
-    cpTinyDir('icesearchreplace');
-    //grunt.file.delete('dist/sr_editor_plugin.js');
   });
 
   var cpTinyDir = function(dir) {

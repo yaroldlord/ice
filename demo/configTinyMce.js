@@ -1807,7 +1807,7 @@ tinyMCE.init({
     remove_linebreaks: !1,
     encoding: 'xml',
     entity_encoding: 'raw',
-    plugins: 'table,searchreplace,print,fullscreen,trailing,paste,ice,icesearchreplace',
+    plugins: 'table,searchreplace,print,fullscreen,trailing,paste,ice',
     theme_advanced_toolbar_location: 'top',
     theme_advanced_toolbar_align: 'left',
     theme_advanced_buttons1: 'fullscreen,separator,undo,redo,selectall,separator,bold,italic,underline,justifyleft,justifycenter,justifyright,justifyfull,separator,pastetext,pasteword,pasteEditor,',
