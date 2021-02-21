@@ -2,10 +2,8 @@
 	display: none;
 }
 
-.CT-hide .ins, .CT-hide .ins {
-	color: #333333;
-	background: none !important;
-  border: none !important; 
+.CT-origin .ins, .CT-origin .ins {
+	display: none;
 }
 
 .ins,
