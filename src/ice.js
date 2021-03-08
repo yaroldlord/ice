@@ -722,7 +722,9 @@
          * Returns true if node has a user id attribute that matches the current user id.
          */
         _currentUserIceNode: function (node) {
-            return ice.dom.attr(node, this.userIdAttribute) === this.currentUser.id;
+            // Attention equality here requires well to cast
+            // noinspection EqualityComparisonWithCoercionJS
+            return ice.dom.attr(node, this.userIdAttribute) == this.currentUser.id;
         },
 
         /**
